@@ -13,7 +13,7 @@ SRC_DIR="/tmp/TIC-80"
 BUILD_DIR="/tmp/tic80-build"
 TOOLCHAIN_FILE="/tmp/a30-arm-toolchain.cmake"
 
-ARCH_FLAGS="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard \
+ARCH_FLAGS="-O3 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard \
 -fomit-frame-pointer -ffunction-sections -fdata-sections -ffast-math \
 -fuse-linker-plugin -flto=auto"
 
