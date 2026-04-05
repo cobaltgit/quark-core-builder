@@ -17,6 +17,7 @@ RUN apt-get update && \
     curl \
     clang \
     meson \
+    rsync \
     && rm -rf /var/lib/apt/lists/*
 
 # Install A30 buildroot toolchain (downloaded from toolchains release at build time)
@@ -47,6 +48,14 @@ RUN SYSROOT=/opt/a30/arm-a30-linux-gnueabihf/sysroot && \
     ln -sf librt-2.23.so librt.so.1 && \
     ln -sf libresolv-2.23.so libresolv.so.2 && \
     ln -sf libnsl-2.23.so libnsl.so.1
+
+# Update kernel headers (fixes pcsx_rearmed compilation)
+ADD https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.158.tar.xz /tmp/linux-5.15.158.tar.xz
+RUN tar -xf /tmp/linux-5.15.158.tar.xz -C /tmp && \
+    rm /tmp/linux-5.15.158.tar.xz && \
+    cd /tmp/linux-5.15.158 && \
+    make ARCH=arm CROSS_COMPILE=arm-a30-linux-gnueabihf- headers_install INSTALL_HDR_PATH=/opt/a30/arm-a30-linux-gnueabihf/sysroot/usr && \
+    rm -rf /tmp/linux-5.15.158
 
 # Clone libretro-super build system
 RUN git clone --depth 1 https://github.com/libretro/libretro-super.git /libretro-super
