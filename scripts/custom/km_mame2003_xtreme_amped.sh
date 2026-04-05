@@ -17,4 +17,4 @@ make -j$(nproc)
 cp "/tmp/$CORE_NAME/${CORE_NAME}_libretro.so" /output/cores
 cp "/tmp/$CORE_NAME/info/${CORE_NAME}_libretro.info" /output/core_info/
 rm -rf "/tmp/$CORE_NAME"
-echo "Done!"8
+echo "Done!"
