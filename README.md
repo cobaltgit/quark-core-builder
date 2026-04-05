@@ -14,3 +14,9 @@ The build script uses libretro-super by default to fetch and build cores, howeve
 ```sh
 $ docker run --rm -e CORES="space separated list of cores" -v /path/to/output:/output ghcr.io/cobaltgit/quark-core-builder
 ```
+
+> [!WARNING]
+> Some cores (particularly TIC-80) rely on host tools to build that may not be compiled natively...as such you may need to run the QEMU image beforehand:
+> ```sh
+> $ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+> ```

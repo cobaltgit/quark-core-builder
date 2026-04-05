@@ -10,6 +10,9 @@ OUTPUT_DIR=${OUTPUT_DIR:-/output}
 
 mkdir -p "$OUTPUT_DIR/cores" "$OUTPUT_DIR/core_info"
 
+# update libretro-super
+git pull
+
 for core in $CORES; do
     echo "Building: $core"
     if [ -f "/scripts/custom/$core.sh" ]; then

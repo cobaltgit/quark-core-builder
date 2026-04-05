@@ -18,6 +18,7 @@ RUN apt-get update && \
     clang \
     meson \
     rsync \
+    ruby-full \
     && rm -rf /var/lib/apt/lists/*
 
 # Install A30 buildroot toolchain (downloaded from toolchains release at build time)
