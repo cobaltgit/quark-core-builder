@@ -12,10 +12,7 @@ cd /tmp
 git clone "$CORE_REPO.git" "$CORE_NAME"
 cd "$CORE_NAME"
 
-make -j$(nproc) \
-    CFLAGS="$CFLAGS -w" \
-    CXXFLAGS="$CXXFLAGS -w" \
-    LDFLAGS="$LDFLAGS"
+make -j$(nproc)
 
 cp "/tmp/$CORE_NAME/${CORE_NAME}_libretro.so" /output/cores
 cp "/tmp/$CORE_NAME/info/${CORE_NAME}_libretro.info" /output/core_info/
