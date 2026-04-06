@@ -5,7 +5,7 @@ export TOOLCHAIN=/opt/a30
 export SYSROOT=$TOOLCHAIN/arm-a30-linux-gnueabihf/sysroot
 export CROSS=arm-a30-linux-gnueabihf
 
-export PATH="$TOOLCHAIN/bin:$PATH"
+export PATH="/usr/lib/ccache:$TOOLCHAIN/bin:$PATH"
 
 if command -v ccache > /dev/null 2>&1; then
     echo "using ccache!"

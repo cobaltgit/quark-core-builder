@@ -59,6 +59,13 @@ RUN tar -xf /tmp/linux-5.15.158.tar.xz -C /tmp && \
     make ARCH=arm CROSS_COMPILE=arm-a30-linux-gnueabihf- headers_install INSTALL_HDR_PATH=/opt/a30/arm-a30-linux-gnueabihf/sysroot/usr && \
     rm -rf /tmp/linux-5.15.158
 
+# Create ccache masquerade symlinks for the cross-compiler
+RUN mkdir -p /usr/lib/ccache && \
+    ln -sf /usr/bin/ccache /usr/lib/ccache/arm-a30-linux-gnueabihf-gcc && \
+    ln -sf /usr/bin/ccache /usr/lib/ccache/arm-a30-linux-gnueabihf-g++ && \
+    ln -sf /usr/bin/ccache /usr/lib/ccache/arm-a30-linux-gnueabihf-gcc-13.2.0.br_real && \
+    ln -sf /usr/bin/ccache /usr/lib/ccache/arm-a30-linux-gnueabihf-c++.br_real
+
 # Clone libretro-super build system
 RUN git clone --depth 1 https://github.com/libretro/libretro-super.git /libretro-super
 
