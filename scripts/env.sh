@@ -8,12 +8,14 @@ export CROSS=arm-a30-linux-gnueabihf
 export PATH="$TOOLCHAIN/bin:$PATH"
 
 if command -v ccache > /dev/null 2>&1; then
+    echo "using ccache!"
     export CC="ccache ${CROSS}-gcc"
     export CXX="ccache ${CROSS}-g++"
     export CCACHE_DIR="${CCACHE_DIR:-/ccache}"
     export CCACHE_MAXSIZE="2G"
     export CCACHE_COMPILERCHECK="content"
 else
+    echo "not using ccache"
     export CC="${CROSS}-gcc"
     export CXX="${CROSS}-g++"
 fi
