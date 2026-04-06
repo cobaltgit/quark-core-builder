@@ -6,8 +6,18 @@ export SYSROOT=$TOOLCHAIN/arm-a30-linux-gnueabihf/sysroot
 export CROSS=arm-a30-linux-gnueabihf
 
 export PATH="$TOOLCHAIN/bin:$PATH"
-export CC="${CROSS}-gcc"
-export CXX="${CROSS}-g++"
+
+if command -v ccache > /dev/null 2>&1; then
+    export CC="ccache ${CROSS}-gcc"
+    export CXX="ccache ${CROSS}-g++"
+    export CCACHE_DIR="${CCACHE_DIR:-/ccache}"
+    export CCACHE_MAXSIZE="2G"
+    export CCACHE_COMPILERCHECK="content"
+else
+    export CC="${CROSS}-gcc"
+    export CXX="${CROSS}-g++"
+fi
+
 export AR="${CROSS}-gcc-ar"
 export RANLIB="${CROSS}-gcc-ranlib"
 export NM="${CROSS}-gcc-nm"
