@@ -27,7 +27,7 @@ export PKG_CONFIG_LIBDIR="$SYSROOT/usr/lib/pkgconfig"
 export PKG_CONFIG_SYSROOT_DIR="$SYSROOT"
 export CFLAGS="-Ofast --sysroot=$SYSROOT -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ffast-math -fomit-frame-pointer -fuse-linker-plugin -ffunction-sections -fdata-sections -flto=auto"
 export CXXFLAGS="$CFLAGS"
-export LDFLAGS="--sysroot=$SYSROOT -L$SYSROOT/usr/lib -Wl,--gc-sections,--strip-all -static-libstdc++ -fuse-linker-plugin -flto=auto"
+export LDFLAGS="--sysroot=$SYSROOT -L$SYSROOT/usr/lib -Wl,--gc-sections,--strip-all,--allow-multiple-definition -static-libstdc++ -fuse-linker-plugin -flto=auto"
 
 export CMAKE_PREFIX_PATH="$SYSROOT/usr"
 
