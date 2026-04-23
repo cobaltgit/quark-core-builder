@@ -66,9 +66,6 @@ RUN mkdir -p /usr/lib/ccache && \
     ln -sf /usr/bin/ccache /usr/lib/ccache/arm-a30-linux-gnueabihf-gcc-13.2.0.br_real && \
     ln -sf /usr/bin/ccache /usr/lib/ccache/arm-a30-linux-gnueabihf-c++.br_real
 
-# Clone libretro-super build system
-RUN git clone --depth 1 https://github.com/libretro/libretro-super.git /libretro-super
-
 ENV HOST_CC=arm-a30-linux-gnueabihf
 ENV PATH="/opt/a30/bin:${PATH}"
 
