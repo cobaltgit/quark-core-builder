@@ -10,7 +10,7 @@ OUTPUT_DIR=${OUTPUT_DIR:-/output}
 
 mkdir -p "$OUTPUT_DIR/cores" "$OUTPUT_DIR/core_info"
 
-RUN git clone --depth 1 https://github.com/libretro/libretro-super.git .
+git clone --depth 1 https://github.com/libretro/libretro-super.git .
 
 for core in $CORES; do
     echo "Building: $core"
