@@ -1,0 +1,245 @@
+diff --git a/frontend/main.c b/frontend/main.c
+index e761b3eb..750e7ef3 100644
+--- a/frontend/main.c
++++ b/frontend/main.c
+@@ -148,7 +148,7 @@ void emu_set_default_config(void)
+ #if defined(MIYOO)
+ 	pl_rearmed_cbs.dithering = 0;
+ 	pl_rearmed_cbs.gpu_unai.fast_lighting = 1;
+-	pl_rearmed_cbs.gpu_unai.scale_hires = 1;
++	pl_rearmed_cbs.scale_hires = 1;
+ #endif
+ 	ndrc_g.hacks = 0;
+ 
+@@ -501,8 +501,10 @@ void emu_core_ask_exit(void)
+ 
+ static const char *get_home_dir(void)
+ {
+-#if defined(PANDORA) || !defined(__unix__) || defined(MIYOO)
++#if defined(PANDORA) || !defined(__unix__)
+ 	return ".";
++#elif defined(MIYOO)
++	return "";
+ #else
+ 	static const char *home = NULL;
+ 	struct stat st;
+diff --git a/frontend/main.h b/frontend/main.h
+index 57f27c1d..396b263e 100644
+--- a/frontend/main.h
++++ b/frontend/main.h
+@@ -22,21 +22,35 @@
+ #include <stdlib.h>
+ #include "config.h"
+ 
+-#define PCSX_DOT_DIR "/.pcsx/"
+-#define DEFAULT_MEM_CARD_1 PCSX_DOT_DIR "memcards/card1.mcd"
+-#define DEFAULT_MEM_CARD_2 PCSX_DOT_DIR "memcards/card2.mcd"
+-#define MEMCARD_DIR        PCSX_DOT_DIR "memcards/"
+-#define STATES_DIR         PCSX_DOT_DIR "sstates/"
+-#define CHEATS_DIR         PCSX_DOT_DIR "cheats/"
+-#define PATCHES_DIR        PCSX_DOT_DIR "patches/"
+-#define CFG_DIR            PCSX_DOT_DIR "cfg/"
+-#if !defined(PANDORA) && !defined(MIYOO)
+-#define BIOS_DIR           PCSX_DOT_DIR "bios/"
+-#define SCREENSHOTS_DIR    PCSX_DOT_DIR "screenshots/"
++#if defined(MIYOO)
++#define PCSX_DOT_DIR         ""
++#define PCSX_BASE_DIR        "/mnt/SDCARD/Saves/saves/PCSX/"
++#define PCSX_CFG_BASE        "/mnt/SDCARD/Saves/config/PCSX/"
++#define PCSX_STATE_BASE      "/mnt/SDCARD/Saves/states/PCSX/"
++#define PCSX_SCREENSHOT_BASE "/mnt/SDCARD/Saves/screenshots/PCSX/"
++#define PCSX_BIOS_BASE       "/mnt/SDCARD/BIOS/"
+ #else
+-#define BIOS_DIR           "/bios/"
+-#define SCREENSHOTS_DIR    "/screenshots/"
++#define PCSX_DOT_DIR         "/.pcsx/"
++#define PCSX_BASE_DIR        PCSX_DOT_DIR
++#define PCSX_CFG_BASE        PCSX_DOT_DIR
++#define PCSX_STATE_BASE      PCSX_DOT_DIR
++#define PCSX_SCREENSHOT_BASE PCSX_DOT_DIR
++
++#if defined(PANDORA)
++#define PCSX_BIOS_BASE       "/bios/"
++#else
++#define PCSX_BIOS_BASE       PCSX_DOT_DIR "bios/"
++#endif
+ #endif
++#define MEMCARD_DIR     PCSX_BASE_DIR "memcards/"
++#define STATES_DIR      PCSX_STATE_BASE
++#define CHEATS_DIR      PCSX_BASE_DIR "cheats/"
++#define PATCHES_DIR     PCSX_BASE_DIR "patches/"
++#define CFG_DIR         PCSX_CFG_BASE "cfg/"
++#define SCREENSHOTS_DIR PCSX_SCREENSHOT_BASE
++#define BIOS_DIR        PCSX_BIOS_BASE
++#define DEFAULT_MEM_CARD_1 MEMCARD_DIR "card1.mcd"
++#define DEFAULT_MEM_CARD_2 MEMCARD_DIR "card2.mcd"
+ 
+ extern char cfgfile_basename[MAXPATHLEN];
+ 
+diff --git a/frontend/plat_sdl.c b/frontend/plat_sdl.c
+index ca0bdf74..b0262911 100644
+--- a/frontend/plat_sdl.c
++++ b/frontend/plat_sdl.c
+@@ -38,17 +38,17 @@ static const struct in_default_bind in_sdl_defbinds[] = {
+   { SDLK_RIGHT,     IN_BINDTYPE_PLAYER12, DKEY_RIGHT },
+   { SDLK_LSHIFT,    IN_BINDTYPE_PLAYER12, DKEY_TRIANGLE },
+   { SDLK_LCTRL,     IN_BINDTYPE_PLAYER12, DKEY_CROSS },
+-  { SDLK_LALT,      IN_BINDTYPE_PLAYER12, DKEY_CIRCLE },
+-  { SDLK_SPACE,     IN_BINDTYPE_PLAYER12, DKEY_SQUARE },
++  { SDLK_SPACE,     IN_BINDTYPE_PLAYER12, DKEY_CIRCLE },
++  { SDLK_LALT,      IN_BINDTYPE_PLAYER12, DKEY_SQUARE },
+   { SDLK_RETURN,    IN_BINDTYPE_PLAYER12, DKEY_START },
+-  { SDLK_ESCAPE,    IN_BINDTYPE_PLAYER12, DKEY_SELECT },
++  { SDLK_RCTRL,     IN_BINDTYPE_PLAYER12, DKEY_SELECT },
+   { SDLK_TAB,       IN_BINDTYPE_PLAYER12, DKEY_L1 },
+   { SDLK_BACKSPACE, IN_BINDTYPE_PLAYER12, DKEY_R1 },
+   { SDLK_PAGEUP,    IN_BINDTYPE_PLAYER12, DKEY_L2 },
+   { SDLK_PAGEDOWN,  IN_BINDTYPE_PLAYER12, DKEY_R2 },
+   { SDLK_RALT,      IN_BINDTYPE_PLAYER12, DKEY_L3 },
+   { SDLK_RSHIFT,    IN_BINDTYPE_PLAYER12, DKEY_R3 },
+-  { SDLK_RCTRL,     IN_BINDTYPE_EMU, SACTION_ENTER_MENU },
++  { SDLK_ESCAPE,    IN_BINDTYPE_EMU, SACTION_ENTER_MENU },
+   { 0, 0, 0 }
+ };
+ 
+@@ -58,9 +58,9 @@ const struct menu_keymap in_sdl_key_map[] =
+   { SDLK_DOWN,      PBTN_DOWN },
+   { SDLK_LEFT,      PBTN_LEFT },
+   { SDLK_RIGHT,     PBTN_RIGHT },
+-  { SDLK_LALT,      PBTN_MOK },
++  { SDLK_SPACE,      PBTN_MOK },
+   { SDLK_LCTRL,     PBTN_MBACK },
+-  { SDLK_SPACE,     PBTN_MA2 },
++  { SDLK_LALT,     PBTN_MA2 },
+   { SDLK_LSHIFT,    PBTN_MA3 },
+   { SDLK_TAB,       PBTN_L },
+   { SDLK_BACKSPACE, PBTN_R },
+@@ -533,6 +533,109 @@ static void centered_hud_print(int x, int y, const char *str, int bpp)
+     SDL_UnlockSurface(plat_sdl_screen);
+ }
+ 
++#ifdef MIYOO
++#include <arm_neon.h>
++
++static void miyoo_scaled_blit(int doffs, const void *src_, int w, int h,
++                              int sstride, int bgr24)
++{
++    const unsigned short *src = src_;
++    unsigned short *dst;
++
++    int dw = g_layer_w;
++    int dh = g_layer_h;
++
++    int sdl_w = plat_sdl_screen->w;
++    int sdl_h = plat_sdl_screen->h;
++    int dstride = plat_sdl_screen->pitch / 2;
++
++    int xoff = (sdl_w - dw) / 2;
++    int yoff = (sdl_h - dh) / 2;
++    if (xoff < 0) xoff = 0;
++    if (yoff < 0) yoff = 0;
++
++    if (SDL_MUSTLOCK(plat_sdl_screen))
++        SDL_LockSurface(plat_sdl_screen);
++
++    dst = (unsigned short *)plat_sdl_screen->pixels + yoff * dstride + xoff;
++
++    int scale2x = (dw == w * 2);
++    int scale1x = (dw == w);
++
++    static int xmap[1024];
++    static int ymap[1024];
++
++    if (!scale1x && !scale2x) {
++        for (int dx = 0; dx < dw; dx++)
++            xmap[dx] = dx * w / dw;
++    }
++    for (int dy = 0; dy < dh; dy++)
++        ymap[dy] = dy * h / dh;
++
++    static unsigned short linebuf[1024];
++    unsigned short *prev_row = NULL;
++    int last_sy = -1;
++
++    for (int dy = 0; dy < dh && (yoff + dy) < sdl_h; dy++) {
++        int sy = ymap[dy];
++        unsigned short *drow = dst + dy * dstride;
++
++        if (sy == last_sy && prev_row != NULL) {
++            memcpy(drow, prev_row, dw * 2);
++            continue;
++        }
++
++        last_sy = sy;
++        prev_row = drow;
++
++        const unsigned short *srow = src + sy * sstride;
++
++        if (bgr24)
++            bgr888_to_rgb565(linebuf, srow, w);
++        else
++            bgr555_to_rgb565(linebuf, srow, w);
++
++        if (scale2x) {
++            int dx = 0;
++
++            for (; dx <= w - 8; dx += 8) {
++                uint16x8_t v = vld1q_u16(&linebuf[dx]);
++
++                uint16x8x2_t z = vzipq_u16(v, v);
++
++                vst1q_u16(&drow[dx * 2 + 0], z.val[0]);
++                vst1q_u16(&drow[dx * 2 + 8], z.val[1]);
++            }
++
++            for (; dx < w; dx++) {
++                unsigned short px = linebuf[dx];
++                drow[dx * 2 + 0] = px;
++                drow[dx * 2 + 1] = px;
++            }
++        }
++        else if (scale1x) {
++            int dx = 0;
++
++            for (; dx <= w - 8; dx += 8) {
++                uint16x8_t v = vld1q_u16(&linebuf[dx]);
++                vst1q_u16(&drow[dx], v);
++            }
++
++            for (; dx < w; dx++)
++                drow[dx] = linebuf[dx];
++        }
++        else {
++            for (int dx = 0; dx < dw && (xoff + dx) < sdl_w; dx++) {
++                drow[dx] = linebuf[xmap[dx]];
++            }
++        }
++    }
++
++    if (SDL_MUSTLOCK(plat_sdl_screen))
++        SDL_UnlockSurface(plat_sdl_screen);
++}
++#endif
++
+ static void *setup_blit_callbacks(int w, int h)
+ {
+   pl_plat_clear = NULL;
+@@ -549,12 +652,18 @@ static void *setup_blit_callbacks(int w, int h)
+   else {
+     pl_plat_clear = centered_clear;
+ 
++#ifdef MIYOO
++    pl_plat_blit = miyoo_scaled_blit;
++    pl_plat_hud_print = centered_hud_print;
++    (void)w; (void)h;
++#else
+     if (!SDL_MUSTLOCK(plat_sdl_screen) && w == plat_sdl_screen->w &&
+         h == plat_sdl_screen->h)
+       return plat_sdl_screen->pixels;
+ 
+     pl_plat_blit = centered_blit;
+     pl_plat_hud_print = centered_hud_print;
++#endif
+   }
+   return NULL;
+ }
