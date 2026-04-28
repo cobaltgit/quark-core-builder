@@ -1,4 +1,5 @@
 #!/bin/sh
+# build optimised PCSX-ReARMed standalone for TrimUI Smart
 
 . /scripts/env.sh
 
@@ -8,6 +9,7 @@ git clone --recursive https://github.com/notaz/pcsx_rearmed.git pcsx_rearmed
 cd pcsx_rearmed
 git apply /scripts/custom/patches/pcsx_rearmed_trimuismart.patch
 
+# massive credit to tittilvero from RGH discord for these flags, originally used for TrimUI Model S
 export CFLAGS="-Ofast --sysroot=$SYSROOT \
     -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard \
     -marm \
