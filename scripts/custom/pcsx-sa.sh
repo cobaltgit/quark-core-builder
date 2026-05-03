@@ -30,6 +30,7 @@ export CFLAGS="-Ofast --sysroot=$SYSROOT \
     -falign-loops=16 \
     -ffunction-sections \
     -fdata-sections \
+    -fomit-frame-pointer \
     -fuse-linker-plugin \
     -flto=auto"
 
