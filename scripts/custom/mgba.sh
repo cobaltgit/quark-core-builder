@@ -53,7 +53,8 @@ cmake "$SRC_DIR" -B "$BUILD_DIR" -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DLIBMGBA_ONLY=ON \
     -DBUILD_LIBRETRO=ON \
-    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS"
 
 echo "Building ($(nproc) jobs)..."
 cmake --build "$BUILD_DIR" \
