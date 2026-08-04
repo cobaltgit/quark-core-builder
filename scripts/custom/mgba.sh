@@ -48,7 +48,7 @@ echo "Cloning mGBA..."
 git clone --depth 1 --recursive "$CORE_REPO" "$SRC_DIR"
 
 echo "Configuring..."
-cmake "$SRC_DIR" -B "$BUILD_DIR" \
+cmake "$SRC_DIR" -B "$BUILD_DIR" -GNinja \
     -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
     -DCMAKE_BUILD_TYPE=Release \
     -DLIBMGBA_ONLY=ON \
@@ -57,8 +57,6 @@ cmake "$SRC_DIR" -B "$BUILD_DIR" \
 
 echo "Building ($(nproc) jobs)..."
 cmake --build "$BUILD_DIR" \
-    --target mgba_libretro \
-    --config Release \
     -- -j"$(nproc)"
 
 cp "$BUILD_DIR/mgba_libretro.so" /output/cores/mgba_libretro.so

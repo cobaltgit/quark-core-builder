@@ -31,6 +31,9 @@ export CFLAGS="-Ofast --sysroot=$SYSROOT -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloa
 export CXXFLAGS="$CFLAGS"
 export LDFLAGS="--sysroot=$SYSROOT -L$SYSROOT/usr/lib -Wl,--gc-sections,--strip-all,--allow-multiple-definition -static-libstdc++ -fuse-linker-plugin -flto=auto"
 
+export CMAKE_GENERATOR="Ninja"
+export CMAKE_MAKE_PROGRAM="ninja"
+
 export CMAKE_PREFIX_PATH="$SYSROOT/usr"
 
 export platform="linux-armv7-neon"
