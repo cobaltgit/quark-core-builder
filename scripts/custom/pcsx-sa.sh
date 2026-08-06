@@ -12,6 +12,8 @@ git apply /scripts/custom/patches/pcsx_rearmed_trimuismart.patch
 # massive credit to tittilvero from RGH discord for these flags, originally used for TrimUI Model S
 export CFLAGS="-Ofast --sysroot=$SYSROOT \
     -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard \
+    -ffast-math \
+    -fno-semantic-interposition \
     -marm \
     -pipe \
     -fno-stack-protector \
