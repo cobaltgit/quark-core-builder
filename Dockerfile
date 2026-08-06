@@ -26,11 +26,13 @@ RUN apt-get update && \
 ADD https://github.com/spruceUI/Cores-spruce/releases/download/toolchains/a30_toolchain-v1.0.tar.gz /tmp/
 RUN tar xzf /tmp/a30_toolchain-v1.0.tar.gz -C /opt && rm /tmp/a30_toolchain-v1.0.tar.gz
 
-# Create toolchain wrapper scripts (buildroot wrappers weren't included in tarball)
+# Create toolchain wrapper scripts (buildroot wrappers weren't included in tarball).
+# They append -O3 *after* all other args so that it is the last -O option on the
+# command line and wins, overriding -O2/-O0 that core Makefiles add (GCC: last -O wins).
 RUN SYSROOT=/opt/a30/arm-a30-linux-gnueabihf/sysroot && \
     rm -f /opt/a30/bin/arm-a30-linux-gnueabihf-gcc /opt/a30/bin/arm-a30-linux-gnueabihf-g++ && \
-    printf '#!/bin/sh\nexec /opt/a30/bin/arm-a30-linux-gnueabihf-gcc-13.2.0.br_real --sysroot=%s "$@"\n' "$SYSROOT" > /opt/a30/bin/arm-a30-linux-gnueabihf-gcc && \
-    printf '#!/bin/sh\nexec /opt/a30/bin/arm-a30-linux-gnueabihf-c++.br_real --sysroot=%s "$@"\n' "$SYSROOT" > /opt/a30/bin/arm-a30-linux-gnueabihf-g++ && \
+    printf '#!/bin/sh\nexec /opt/a30/bin/arm-a30-linux-gnueabihf-gcc-13.2.0.br_real "$@" --sysroot=%s -O3\n' "$SYSROOT" > /opt/a30/bin/arm-a30-linux-gnueabihf-gcc && \
+    printf '#!/bin/sh\nexec /opt/a30/bin/arm-a30-linux-gnueabihf-c++.br_real "$@" --sysroot=%s -O3\n' "$SYSROOT" > /opt/a30/bin/arm-a30-linux-gnueabihf-g++ && \
     chmod +x /opt/a30/bin/arm-a30-linux-gnueabihf-gcc /opt/a30/bin/arm-a30-linux-gnueabihf-g++
 
 # Create cross pkg-config wrapper
@@ -52,12 +54,12 @@ RUN SYSROOT=/opt/a30/arm-a30-linux-gnueabihf/sysroot && \
     ln -sf libnsl-2.23.so libnsl.so.1
 
 # Update kernel headers (fixes pcsx_rearmed compilation)
-ADD https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.158.tar.xz /tmp/linux-5.15.158.tar.xz
-RUN tar -xf /tmp/linux-5.15.158.tar.xz -C /tmp && \
-    rm /tmp/linux-5.15.158.tar.xz && \
-    cd /tmp/linux-5.15.158 && \
+ADD https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.42.tar.xz /tmp/linux-6.18.42.tar.xz
+RUN tar -xf /tmp/linux-6.18.42.tar.xz -C /tmp && \
+    rm /tmp/linux-6.18.42.tar.xz && \
+    cd /tmp/linux-6.18.42 && \
     make ARCH=arm CROSS_COMPILE=arm-a30-linux-gnueabihf- headers_install INSTALL_HDR_PATH=/opt/a30/arm-a30-linux-gnueabihf/sysroot/usr && \
-    rm -rf /tmp/linux-5.15.158
+    rm -rf /tmp/linux-6.18.42
 
 # Create ccache masquerade symlinks for the cross-compiler
 RUN mkdir -p /usr/lib/ccache && \
