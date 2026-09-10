@@ -60,7 +60,7 @@ echo "Building ($(nproc) jobs)..."
 cmake --build "$BUILD_DIR" \
     -- -j"$(nproc)"
 
-cp "$BUILD_DIR/hatari_libretro.so" /output/cores/hatari_libretro.so
+cp "$BUILD_DIR/src/hatari_libretro.so" /output/cores/hatari_libretro.so
 cp "/libretro-super/dist/info/hatari_libretro.info" /output/core_info/hatari_libretro.info
 
 # Cleanup
