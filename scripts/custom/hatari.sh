@@ -1,12 +1,9 @@
 #!/bin/bash
-# Builder for TIC-80 libretro core with all game interpreters for maximum compatibility
+# Builder for Hatari libretro core
 
 set -e
 
 . /scripts/env.sh
-
-# For QEMU host tools to work (janet, mrbc)
-export QEMU_LD_PREFIX="$SYSROOT"
 
 CORE_REPO="https://github.com/libretro/hatari.git"
 SRC_DIR="/tmp/hatari"
