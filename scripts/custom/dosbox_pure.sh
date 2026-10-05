@@ -5,7 +5,7 @@ set -e
 . "$(dirname "$0")/../env.sh"
 
 CORE_NAME="dosbox_pure"
-CORE_REPO="https://github.com/schellingb/dosbox-pure.git"
+CORE_REPO="https://codeberg.org/schelling/dosbox-pure.git"
 
 cd /tmp
 git clone "$CORE_REPO" "$CORE_NAME"
