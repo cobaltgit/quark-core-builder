@@ -64,6 +64,7 @@ cp "$SRC_DIR/build/janet/janetconf.h" \
 mkdir -p "$BUILD_DIR"
 echo "Configuring..."
 
+# building without gravity temporarily
 cmake "$SRC_DIR" -B "$BUILD_DIR" \
     -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
     -DCMAKE_BUILD_TYPE=Release \
@@ -76,6 +77,7 @@ cmake "$SRC_DIR" -B "$BUILD_DIR" \
     -DBUILD_TOOLS=OFF \
     -DBUILD_TOUCH_INPUT=OFF \
     -DBUILD_STATIC=ON \
+    -DBUILD_WITH_GRAVITY=OFF \
     \
     -DBUILD_WITH_ALL=ON \
     \
